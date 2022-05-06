@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useAppContext } from '../context/appContext';
 import { Logo, FormRow, Alert } from '../components';
 import Wrapper from '../assets/wrappers/RegisterPage';
 
@@ -7,23 +8,32 @@ const initialState = {
   email: '',
   password: '',
   isMember: false,
-  showAlert: false,
 };
 
 const Register = () => {
   const [values, setValues] = useState(initialState);
+  const { isLoading, showAlert, displayAlert } = useAppContext();
 
   const toggleMember = () => {
     setValues({ ...values, isMember: !values.isMember });
   };
 
   const handleChange = e => {
-    console.log(e.target);
+    setValues({ ...values, [e.target.name]: e.target.value });
   };
 
   const onSubmit = e => {
     e.preventDefault();
-    console.log(e.target);
+
+    const { name, email, password, isMember } = values;
+
+    // name proveri samo ako user nije registrovan u suprotnom nemoj nista da proveravas za name
+    if (!email || !password || (!isMember && !name)) {
+      displayAlert();
+      return;
+    }
+
+    console.log(values);
   };
 
   return (
@@ -31,7 +41,7 @@ const Register = () => {
       <form className="form" onSubmit={onSubmit}>
         <Logo />
         <h3>{values.isMember ? 'Login' : 'Register'}</h3>
-        {values.showAlert && <Alert />}
+        {showAlert && <Alert />}
         {/* name input */}
         {!values.isMember && (
           <FormRow
