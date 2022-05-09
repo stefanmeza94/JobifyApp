@@ -1,51 +1,59 @@
-import mongoose from 'mongoose';
-import validator from 'validator';
-import bcrypt from 'bcryptjs';
+import mongoose from "mongoose";
+import validator from "validator";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'Please provide name'],
+    required: [true, "Please provide name"],
     minlength: 3,
     maxlength: 20,
     trim: true,
   },
   email: {
     type: String,
-    required: [true, 'Please provide email'],
+    required: [true, "Please provide email"],
     validate: {
       validator: validator.isEmail,
-      message: 'Please provide valid email',
+      message: "Please provide valid email",
     },
     unique: true,
   },
   password: {
     type: String,
-    required: [true, 'Please provide password'],
+    required: [true, "Please provide password"],
     minlength: 6,
   },
   lastName: {
     type: String,
     trim: true,
     maxlength: 20,
-    default: 'lastName',
+    default: "lastName",
   },
   location: {
     type: String,
     trim: true,
     maxlength: 20,
-    default: 'my city',
+    default: "my city",
   },
 });
 
 // pre save hook koji ce da se pokrene pre nego sto kreiramo model usera
 // mora da bude funkcijska deklaracija zato sto cemo da koristimo THIS (arrow funkcije prilikom izvrsavanja ne dobijaju this varijablu)
 // pre svakog kreiranja skime usera u bazu pokretace se ova pre() funkcija koja ce za nas da hashuje password.
-UserSchema.pre('save', async function () {
+UserSchema.pre("save", async function () {
   // ovaj salt ce da generise neke radnom brojeve i slova
+  // sto veci broj prosledimo genSalt() funkciji to biti bolje zasticen password medjutim s druge strane trebace vise vremena da se to odradi!
   const salt = await bcrypt.genSalt(10);
   // this.password ce zapravo da bude password koji smo prosledili sa klijentske strane
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-export default mongoose.model('User', UserSchema);
+UserSchema.methods.createJWT = function () {
+  return jwt.sign({ userId: this._id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_LIFETIME,
+  });
+};
+
+export default mongoose.model("User", UserSchema);
