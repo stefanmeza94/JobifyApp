@@ -1,5 +1,11 @@
+import User from '../models/User.js';
+import { StatusCodes } from 'http-status-codes';
+
 const register = async (req, res) => {
-  res.send('register user');
+  // posto koristmo paket express-async-errors ne moramo da koristimo ovde trycatch block samim tim ne moramo da koristmo nexto() funkciju koja ce da gadja sledec middleware, taj paket ce za nas u pozadini sam da prosledjuje gresku nasem middlewaru (error-handler.js unutar middleware foldera)
+  const user = await User.create(req.body);
+  // ovde koristimo paket http-status-codes koji ce unutar ovih konstati (CREATE, INTERNAL_SERVER_ERROR  itd) da nam vraca adekvatne brojeve gresaka.
+  res.status(StatusCodes.CREATED).json({ user });
 };
 
 const login = async (req, res) => {
