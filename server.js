@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import 'express-async-errors';
+import morgan from 'morgan';
 
 // db and authenticatieUser
 import connectDB from './db/connect.js';
@@ -17,6 +18,12 @@ import jobsRouter from './routes/jobRoutes.js';
 // middleware
 import notFoundMiddleware from './middleware/not-found.js';
 import errorHandlerMiddleware from './middleware/error-handler.js';
+
+// ovaj NODE_ENV ce na kraju da doda heroku kad budemo diplojovali nasu aplikacju tamo, tako da ako NODE_ENV nije jednak 'production' pokreni morgan middleware
+// morgan biblioteka ce za nas da loguje informacije o zahtevima koji su upuceni naserm serveru (put, post, patch, delete...) takodje ce logovati status code kao i vreme u milisekundama prakticno ono sto smo prosledili unutar morgan funkcije
+if (process.env.NODE_ENV !== 'production') {
+  app.use(morgan('dev'));
+}
 
 // middleware koji ce da nam pomogne da da ocitamo json koji nam stize post metodom sa klijentske strane
 app.use(express.json());
