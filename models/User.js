@@ -51,11 +51,17 @@ UserSchema.pre('save', async function () {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-// kreirmao metodu instance userSchema (ovo createJWT mozemo da nazovemo kako god zelimo)
+// kreirmao metodu instance userSchema (ovo createJWT mozemo da nazovemo kako god zelimo) koja ce za nas da kreira token. Ovu metodu pozivamo u register kontroleru i saljemo ga useru.
 UserSchema.methods.createJWT = function () {
   return jwt.sign({ userId: this._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_LIFETIME,
   });
+};
+
+// pravimo jos jednu custom metodu ove instance UserSchema gde proveravamo password koji dobijamo sa frontenda sa onim koje imamo u bazi! Funkcija vraca true ili false
+UserSchema.methods.comparePassword = async function (candidatePassword) {
+  const isMatch = await bcrypt.compare(candidatePassword, this.password);
+  return isMatch;
 };
 
 export default mongoose.model('User', UserSchema);

@@ -1,6 +1,6 @@
 import User from '../models/User.js';
 import { StatusCodes } from 'http-status-codes';
-import { BadRequestError } from '../errors/index.js';
+import { BadRequestError, UnAuthenticatedError } from '../errors/index.js';
 
 // ako nasa baza bude kompromitovana nas password ce da bude na izvolte napdacu ako stoji kao string, zato je bolja opcija da pre nego sto posaljemo nasu sifru u bazu (monogoDB) da je hash-ujemo. Jednom kada hash-ujemo password ne mozemo vise da ga odhashujemo, jedino sto mozemo jeste da ga storujemo tako hashovan u bazu podataka i prilikom logovanja da uporedmimo uneti password sa nasim hasovanim
 
@@ -33,6 +33,17 @@ const register = async (req, res) => {
 };
 
 const login = async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    throw new BadRequestError('Please provide all values');
+  }
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new UnAuthenticatedError('Invalid Credentials');
+  }
+
   res.send('login user');
 };
 
