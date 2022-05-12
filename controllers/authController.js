@@ -35,12 +35,14 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   const { email, password } = req.body;
 
+  // prvo proveravamo da li fali jedan od inputa
   if (!email || !password) {
     throw new BadRequestError('Please provide all values');
   }
 
   // prvo nalazimo usera sa tim email koji je korisnik iskucao u login input, da vidimo da li postoji u bazi
-  // User.findOne() metoda nece da vrati password jer smo rekli u user skimi da select ima vrednost false i zato moramo da dodamo select metodu ovde ('+password')
+  // User.findOne() metoda nece da vrati password jer smo rekli u user skimi da select ima vrednost false za password i zato moramo da dodamo select metodu ovde ('+password')
+  // pravice problem tamo u user.comparePassword kada pristupamo this.password (udenfined) ukoliko ne prosledimo select() metodu!
   const user = await User.findOne({ email }).select('+password');
   // ukoliko user sa tim email ne postoji vracamo gresku
   if (!user) {
@@ -49,7 +51,7 @@ const login = async (req, res) => {
 
   // ako user sa tim email postoji onda hocemo da uporedimo password
   const isPasswordCorrect = await user.comparePassword(password);
-  // saljemo gresku ako se password ne pokalapa sa passwordom od usera ciji je email unet
+  // saljemo gresku ako se uneti password ne pokalapa sa passwordom od usera ciji je email unet
   if (!isPasswordCorrect) {
     throw new UnAuthenticatedError('Invalid Credentials');
   }
