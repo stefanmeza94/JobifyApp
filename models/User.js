@@ -60,6 +60,8 @@ UserSchema.methods.createJWT = function () {
 
 // pravimo jos jednu custom metodu ove instance UserSchema gde proveravamo password koji dobijamo sa frontenda sa onim koje imamo u bazi! Funkcija vraca true ili false
 UserSchema.methods.comparePassword = async function (candidatePassword) {
+  // bcrypt biblioteka ne moze da nadje this.password, dakle password za tog usera zato sto je ona undefined, jer je nismo predefinisali i stavili smo gore za password select: false
+  // sa nekim metodama ce da vraca password npr User.create() ona ce da ima pristup i passwordu zato u register kontroleru vracamo custom objekat bez sifre, medjutim sa User.findOne nece vracati password tako da u login kontroleru moramo da dodamo select metodu
   const isMatch = await bcrypt.compare(candidatePassword, this.password);
   return isMatch;
 };

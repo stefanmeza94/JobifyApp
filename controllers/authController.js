@@ -39,12 +39,26 @@ const login = async (req, res) => {
     throw new BadRequestError('Please provide all values');
   }
 
-  const user = await User.findOne({ email });
+  // prvo nalazimo usera sa tim email koji je korisnik iskucao u login input, da vidimo da li postoji u bazi
+  // User.findOne() metoda nece da vrati password jer smo rekli u user skimi da select ima vrednost false i zato moramo da dodamo select metodu ovde ('+password')
+  const user = await User.findOne({ email }).select('+password');
+  // ukoliko user sa tim email ne postoji vracamo gresku
   if (!user) {
     throw new UnAuthenticatedError('Invalid Credentials');
   }
 
-  res.send('login user');
+  // ako user sa tim email postoji onda hocemo da uporedimo password
+  const isPasswordCorrect = await user.comparePassword(password);
+  // saljemo gresku ako se password ne pokalapa sa passwordom od usera ciji je email unet
+  if (!isPasswordCorrect) {
+    throw new UnAuthenticatedError('Invalid Credentials');
+  }
+
+  const token = await user.createJWT();
+
+  // ovde mozemo opet da hardkodiramo da ne vracamo celog usera kao sto vracamo u register kontroleru (sa sve passwordom jer nije najbolja praksa da saljemo i password na front), dok je druga opcija da setujemo password od usera na undefined!
+  user.password = undefined;
+  res.status(StatusCodes.OK).json({ user, token, location: user.location });
 };
 
 const updateUser = async (req, res) => {
