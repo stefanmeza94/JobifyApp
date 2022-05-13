@@ -8,6 +8,8 @@ import {
   SETUP_USER_BEGIN,
   SETUP_USER_SUCCESS,
   SETUP_USER_ERROR,
+  TOGGLE_SIDEBAR,
+  LOGOUT_USER,
 } from './actions';
 
 const token = localStorage.getItem('token');
@@ -23,6 +25,7 @@ const initialState = {
   token: token,
   userLocation: userLocation || '',
   jobLocation: userLocation || '',
+  showSidebar: false,
 };
 
 const AppContext = createContext();
@@ -47,55 +50,13 @@ const AppProvider = ({ children }) => {
     localStorage.setItem('location', location);
   };
 
-  const deleteUserFromLocalStorage = () => {
+  const removeUserFromLocalStorage = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
     localStorage.removeItem('location');
   };
 
-  // const registerUser = async (currentUser) => {
-  //   dispatch({ type: REGISTER_USER_BEGIN });
-  //   try {
-  //     const response = await axios.post('/api/v1/auth/register', currentUser);
-  //     const { user, token, location } = response.data;
-
-  //     dispatch({
-  //       type: REGISTER_USER_SUCCESS,
-  //       payload: { user, token, location },
-  //     });
-
-  //     addUserToLocalStorage({ user, token, location });
-  //   } catch (error) {
-  //     console.log(error.response);
-  //     dispatch({
-  //       type: REGISTER_USER_ERROR,
-  //       payload: { msg: error.response.data.msg },
-  //     });
-  //   }
-  //   clearAlert();
-  // };
-
-  // const loginUser = async (currentUser) => {
-  //   dispatch({ type: LOGIN_USER_BEGIN });
-  //   try {
-  //     const {
-  //       data: { user, token, location },
-  //     } = await axios.post('/api/v1/auth/login', currentUser);
-
-  //     dispatch({
-  //       type: LOGIN_USER_SUCCESS,
-  //       payload: { user, token, location },
-  //     });
-  //     addUserToLocalStorage({ user, token, location });
-  //   } catch (error) {
-  //     dispatch({
-  //       type: LOGIN_USER_ERROR,
-  //       payload: { msg: error.response.data.msg },
-  //     });
-  //   }
-  //   clearAlert();
-  // };
-
+  // prakticno su register i login bile dve odvojene funkcije ali posto su jako slicne odradjena je jedna kojoj prosledjujemo kroz parametre da li je u pitanju login ili register i naravno razlicite endpointe.
   const setupUser = async ({ currentUser, endPoint, alertText }) => {
     dispatch({ type: SETUP_USER_BEGIN });
     try {
@@ -116,8 +77,19 @@ const AppProvider = ({ children }) => {
     clearAlert();
   };
 
+  const toggleSidebar = () => {
+    dispatch({ type: TOGGLE_SIDEBAR });
+  };
+
+  const logoutUser = () => {
+    dispatch({ type: LOGOUT_USER });
+    removeUserFromLocalStorage();
+  };
+
   return (
-    <AppContext.Provider value={{ ...state, displayAlert, setupUser }}>
+    <AppContext.Provider
+      value={{ ...state, displayAlert, setupUser, toggleSidebar, logoutUser }}
+    >
       {children}
     </AppContext.Provider>
   );

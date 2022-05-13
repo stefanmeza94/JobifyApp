@@ -4,7 +4,10 @@ import {
   SETUP_USER_BEGIN,
   SETUP_USER_SUCCESS,
   SETUP_USER_ERROR,
+  TOGGLE_SIDEBAR,
+  LOGOUT_USER,
 } from './actions';
+import { initialState } from './appContext';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -22,53 +25,6 @@ const reducer = (state, action) => {
         alertType: '',
         alertText: '',
       };
-    // case REGISTER_USER_BEGIN:
-    //   return { ...state, isLoading: true };
-    // case REGISTER_USER_SUCCESS:
-    //   return {
-    //     ...state,
-    //     isLoading: false,
-    //     token: action.payload.token,
-    //     user: action.payload.user,
-    //     userLocation: action.payload.location,
-    //     jobLocation: action.payload.location,
-    //     showAlert: true,
-    //     alertType: 'success',
-    //     alertText: 'User Created! Redirecting...',
-    //   };
-    // case REGISTER_USER_ERROR:
-    //   return {
-    //     ...state,
-    //     isLoading: false,
-    //     showAlert: true,
-    //     alertType: 'danger',
-    //     alertText: action.payload.msg,
-    //   };
-    // case LOGIN_USER_BEGIN:
-    //   return {
-    //     ...state,
-    //     isLoading: true,
-    //   };
-    // case LOGIN_USER_SUCCESS:
-    //   return {
-    //     ...state,
-    //     isLoading: false,
-    //     token: action.payload.token,
-    //     user: action.payload.user,
-    //     userLocation: action.payload.location,
-    //     jobLocation: action.payload.location,
-    //     showAlert: true,
-    //     alertType: 'success',
-    //     alertText: 'Login Successful! Redirecting...',
-    //   };
-    // case LOGIN_USER_ERROR:
-    //   return {
-    //     ...state,
-    //     isLoading: false,
-    //     showAlert: true,
-    //     alertType: 'danger',
-    //     alertText: action.payload.msg,
-    //   };
     case SETUP_USER_BEGIN:
       return {
         ...state,
@@ -93,19 +49,22 @@ const reducer = (state, action) => {
         alertType: 'danger',
         alertText: action.payload.msg,
       };
+    case TOGGLE_SIDEBAR:
+      return {
+        ...state,
+        showSidebar: !state.showSidebar,
+      };
+    case LOGOUT_USER:
+      return {
+        ...initialState,
+        user: null,
+        token: null,
+        userLocation: '',
+        jobLocation: '',
+      };
     default:
       throw new Error(`no such action : ${action.type}`);
   }
 };
 
-// const initialState = {
-//   isLoading: false,
-//   showAlert: false,
-//   alertText: '',
-//   alertType: '',
-//   user: null,
-//   token: null,
-//   userLocation: '',
-//   jobLocation: '',
-// };
 export default reducer;
