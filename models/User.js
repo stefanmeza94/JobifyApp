@@ -43,7 +43,12 @@ const UserSchema = new mongoose.Schema({
 // pre save hook koji ce da se pokrene pre nego sto kreiramo model usera i pre nego sto ovaj password ode u bazu podataka na monogoDB
 // mora da bude funkcijska deklaracija zato sto cemo da koristimo THIS (arrow funkcije prilikom izvrsavanja ne dobijaju this varijablu)
 // pre svakog kreiranja skime usera u bazu pokretace se ova pre() funkcija koja ce za nas da hashuje password.
+// medjutim ova pre funkcija nece da se pokrece bas za svaku metodu koju upotrebimo za ovaj user model
 UserSchema.pre("save", async function () {
+  //modifiedPaths() ce da vrati array sa svim properitijma koje smo promenili, takodje postoji isModified('name') koja ce da proveri da li je odredjeni properti menjan (u ovom slucaju name)
+  // console.log(this.modifiedPaths());
+  // ukoliko NISMO menajli password izadji iz funkcije tj nemoj da hasujes password
+  if (!this.isModified("password")) return;
   // ovaj salt ce da generise neke radnom brojeve i slova
   // sto veci broj prosledimo genSalt() funkciji to biti bolje zasticen password medjutim s druge strane trebace vise vremena da se to odradi!
   const salt = await bcrypt.genSalt(10);
