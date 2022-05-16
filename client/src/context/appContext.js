@@ -1,6 +1,6 @@
-import { createContext, useContext, useReducer } from 'react';
-import reducer from './reducer';
-import axios from 'axios';
+import { createContext, useContext, useReducer } from "react";
+import reducer from "./reducer";
+import axios from "axios";
 
 import {
   CLEAR_ALERT,
@@ -10,21 +10,21 @@ import {
   SETUP_USER_ERROR,
   TOGGLE_SIDEBAR,
   LOGOUT_USER,
-} from './actions';
+} from "./actions";
 
-const token = localStorage.getItem('token');
-const user = localStorage.getItem('user');
-const userLocation = localStorage.getItem('location');
+const token = localStorage.getItem("token");
+const user = localStorage.getItem("user");
+const userLocation = localStorage.getItem("location");
 
 const initialState = {
   isLoading: false,
   showAlert: false,
-  alertText: '',
-  alertType: '',
+  alertText: "",
+  alertType: "",
   user: user ? JSON.parse(user) : null,
   token: token,
-  userLocation: userLocation || '',
-  jobLocation: userLocation || '',
+  userLocation: userLocation || "",
+  jobLocation: userLocation || "",
   showSidebar: false,
 };
 
@@ -45,15 +45,15 @@ const AppProvider = ({ children }) => {
   };
 
   const addUserToLocalStorage = ({ user, token, location }) => {
-    localStorage.setItem('user', JSON.stringify(user));
-    localStorage.setItem('token', token);
-    localStorage.setItem('location', location);
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("token", token);
+    localStorage.setItem("location", location);
   };
 
   const removeUserFromLocalStorage = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-    localStorage.removeItem('location');
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    localStorage.removeItem("location");
   };
 
   // prakticno su register i login bile dve odvojene funkcije ali posto su jako slicne odradjena je jedna kojoj prosledjujemo kroz parametre da li je u pitanju login ili register i naravno razlicite endpointe.
@@ -86,9 +86,20 @@ const AppProvider = ({ children }) => {
     removeUserFromLocalStorage();
   };
 
+  const updateUser = async (currentUser) => {
+    console.log(currentUser);
+  };
+
   return (
     <AppContext.Provider
-      value={{ ...state, displayAlert, setupUser, toggleSidebar, logoutUser }}
+      value={{
+        ...state,
+        displayAlert,
+        setupUser,
+        toggleSidebar,
+        logoutUser,
+        updateUser,
+      }}
     >
       {children}
     </AppContext.Provider>
