@@ -10,6 +10,9 @@ import {
   SETUP_USER_ERROR,
   TOGGLE_SIDEBAR,
   LOGOUT_USER,
+  UPDATE_USER_BEGIN,
+  UPDATE_USER_SUCCESS,
+  UPDATE_USER_ERROR,
 } from "./actions";
 
 const token = localStorage.getItem("token");
@@ -41,7 +44,7 @@ const AppProvider = ({ children }) => {
   // axios intereceptors
   authFetch.interceptors.request.use(
     (config) => {
-      // config.headers.common["Authorization"] = `Bearer ${state.token}`;
+      config.headers.common["Authorization"] = `Bearer ${state.token}`;
       return config;
     },
     (error) => {
@@ -54,9 +57,9 @@ const AppProvider = ({ children }) => {
       return response;
     },
     (error) => {
-      console.log(error.response);
+      // ako token istekne i user vise nije authorized da radi bilo sta u aplikaciji izlogovacemo usera
       if (error.response.status === 401) {
-        console.log("AUTH ERROR");
+        logoutUser();
       }
       return Promise.reject(error);
     }
@@ -116,12 +119,26 @@ const AppProvider = ({ children }) => {
   };
 
   const updateUser = async (currentUser) => {
+    dispatch({ type: UPDATE_USER_BEGIN });
     try {
-      const { data } = await authFetch.patch("/auth/updateUser", currentUser);
-      console.log(data);
+      const {
+        data: { user, token, location },
+      } = await authFetch.patch("/auth/updateUser", currentUser);
+      dispatch({
+        type: UPDATE_USER_SUCCESS,
+        payload: { user, token, location },
+      });
+      addUserToLocalStorage({ user, token, location });
     } catch (error) {
-      console.log(error.message);
+      // ako greska nije 401 samo tad prikazi gresku, jer ako je unauthorized samo cemo da izlogujemo usera, nema potrebe da prikazujemo nista
+      if (error.response.status !== 401) {
+        dispatch({
+          type: UPDATE_USER_ERROR,
+          payload: { msg: error.response.data.msg },
+        });
+      }
     }
+    clearAlert();
   };
 
   return (
