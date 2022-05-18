@@ -104,7 +104,7 @@ const reducer = (state, action) => {
         [action.payload.name]: action.payload.value,
       };
     case CLEAR_VALUES:
-      const initialState = {
+      const initial = {
         isEditing: false,
         editJobId: '',
         position: '',
@@ -115,7 +115,7 @@ const reducer = (state, action) => {
       };
       return {
         ...state,
-        ...initialState,
+        ...initial,
       };
     case CREATE_JOB_BEGIN:
       return {
