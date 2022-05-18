@@ -14,6 +14,8 @@ const AddJob = () => {
     jobTypeOptions,
     status,
     statusOptions,
+    handleChange,
+    clearValues,
   } = useAppContext();
 
   const handleSubmit = (e) => {
@@ -29,7 +31,8 @@ const AddJob = () => {
   const handleJobInput = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-    console.log(`${name}: ${value}`);
+
+    handleChange({ name, value });
   };
 
   return (
@@ -83,6 +86,17 @@ const AddJob = () => {
               onClick={handleSubmit}
             >
               submit
+            </button>
+            {/* posto se i ovaj clear button nalazi unutar forme moramo da preventujemo podrazumevano ponasanje browsera odnosno da sprecimo submit forme, takodje je bitno da ovaj clear buttton bude drugi po redosledu jer ako ga stavimo ispred submit, klikom na enter dugme pozvacemo taj clera button umesto submit */}
+            <button
+              className='btn btn-block clear-btn'
+              type='submit'
+              onClick={(e) => {
+                e.preventDefault();
+                clearValues();
+              }}
+            >
+              clear
             </button>
           </div>
         </div>

@@ -9,8 +9,10 @@ import {
   UPDATE_USER_BEGIN,
   UPDATE_USER_SUCCESS,
   UPDATE_USER_ERROR,
-} from "./actions";
-import { initialState } from "./appContext";
+  HANDLE_CHANGE,
+  CLEAR_VALUES,
+} from './actions';
+import { initialState } from './appContext';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -18,15 +20,15 @@ const reducer = (state, action) => {
       return {
         ...state,
         showAlert: true,
-        alertType: "danger",
-        alertText: "Please provide all values!",
+        alertType: 'danger',
+        alertText: 'Please provide all values!',
       };
     case CLEAR_ALERT:
       return {
         ...state,
         showAlert: false,
-        alertType: "",
-        alertText: "",
+        alertType: '',
+        alertText: '',
       };
     case SETUP_USER_BEGIN:
       return {
@@ -42,7 +44,7 @@ const reducer = (state, action) => {
         userLocation: action.payload.location,
         jobLocation: action.payload.location,
         showAlert: true,
-        alertType: "success",
+        alertType: 'success',
         alertText: action.payload.alertText,
       };
     case SETUP_USER_ERROR:
@@ -50,7 +52,7 @@ const reducer = (state, action) => {
         ...state,
         isLoading: false,
         showAlert: true,
-        alertType: "danger",
+        alertType: 'danger',
         alertText: action.payload.msg,
       };
     case TOGGLE_SIDEBAR:
@@ -63,8 +65,8 @@ const reducer = (state, action) => {
         ...initialState,
         user: null,
         token: null,
-        userLocation: "",
-        jobLocation: "",
+        userLocation: '',
+        jobLocation: '',
       };
     case UPDATE_USER_BEGIN:
       return {
@@ -80,16 +82,35 @@ const reducer = (state, action) => {
         userLocation: action.payload.location,
         jobLocation: action.payload.location,
         showAlert: true,
-        alertType: "success",
-        alertText: "User Profile Updated!",
+        alertType: 'success',
+        alertText: 'User Profile Updated!',
       };
     case UPDATE_USER_ERROR:
       return {
         ...state,
         isLoading: false,
         showAlert: true,
-        alertType: "danger",
+        alertType: 'danger',
         alertText: action.payload.msg,
+      };
+    case HANDLE_CHANGE:
+      return {
+        ...state,
+        [action.payload.name]: action.payload.value,
+      };
+    case CLEAR_VALUES:
+      const initialState = {
+        isEditing: false,
+        editJobId: '',
+        position: '',
+        company: '',
+        jobLocation: state.userLocation,
+        jobType: 'full-time',
+        status: 'pending',
+      };
+      return {
+        ...state,
+        ...initialState,
       };
     default:
       throw new Error(`no such action : ${action.type}`);
