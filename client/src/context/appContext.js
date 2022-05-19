@@ -232,6 +232,7 @@ const AppProvider = ({ children }) => {
     dispatch({ type: DELETE_JOB_BEGIN });
     try {
       await authFetch.delete(`/jobs/${jobId}`);
+      // cim obrisemo neki job hocemo da povucemo sve poslove opet da bi dobili updattovani array bez tog posla koji smo obrisali
       await getJobs();
     } catch (error) {
       console.log(error.response);
