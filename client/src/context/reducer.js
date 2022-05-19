@@ -18,6 +18,9 @@ import {
   GET_JOBS_SUCCESS,
   SET_EDIT_JOB,
   DELETE_JOB_BEGIN,
+  EDIT_JOB_BEGIN,
+  EDIT_JOB_SUCCESS,
+  EDIT_JOB_ERROR,
 } from './actions';
 import { initialState } from './appContext';
 
@@ -171,6 +174,27 @@ const reducer = (state, action) => {
       return {
         ...state,
         isLoading: true,
+      };
+    case EDIT_JOB_BEGIN:
+      return {
+        ...state,
+        isLoading: true,
+      };
+    case EDIT_JOB_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        showAlert: true,
+        alertText: 'Job Updated!',
+        alertType: 'success',
+      };
+    case EDIT_JOB_ERROR:
+      return {
+        ...state,
+        isLoading: false,
+        showAlert: true,
+        alertType: 'danger',
+        alertText: action.payload.msg,
       };
     default:
       throw new Error(`no such action : ${action.type}`);

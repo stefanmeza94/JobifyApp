@@ -94,7 +94,7 @@ const AddJob = () => {
               type='submit'
               onClick={handleSubmit}
             >
-              submit
+              {isEditing ? 'edit' : 'submit'}
             </button>
             {/* posto se i ovaj clear button nalazi unutar forme moramo da preventujemo podrazumevano ponasanje browsera odnosno da sprecimo submit forme, takodje je bitno da ovaj clear buttton bude drugi po redosledu jer ako ga stavimo ispred submit, klikom na enter dugme pozvacemo taj clera button umesto submit */}
             <button
