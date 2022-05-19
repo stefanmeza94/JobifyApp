@@ -1,18 +1,18 @@
-import User from "../models/User.js";
-import { RESET_CONTENT, StatusCodes } from "http-status-codes";
-import { BadRequestError, UnAuthenticatedError } from "../errors/index.js";
+import User from '../models/User.js';
+import { StatusCodes } from 'http-status-codes';
+import { BadRequestError, UnAuthenticatedError } from '../errors/index.js';
 
 // ako nasa baza bude kompromitovana nas password ce da bude na izvolte napdacu ako stoji kao string, zato je bolja opcija da pre nego sto posaljemo nasu sifru u bazu (monogoDB) da je hash-ujemo. Jednom kada hash-ujemo password ne mozemo vise da ga odhashujemo, jedino sto mozemo jeste da ga storujemo tako hashovan u bazu podataka i prilikom logovanja da uporedmimo uneti password sa nasim hasovanim
 
 const register = async (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
-    throw new BadRequestError("please provide all values");
+    throw new BadRequestError('please provide all values');
   }
 
   const emailAlreadyExists = await User.findOne({ email });
   if (emailAlreadyExists) {
-    throw new BadRequestError("Email already in use");
+    throw new BadRequestError('Email already in use');
   }
 
   // posto koristmo paket express-async-errors ne moramo da koristimo ovde trycatch block samim tim ne moramo da koristmo next() funkciju koja ce da gadja sledeci middleware, taj paket ce za nas u pozadini sam da prosledjuje gresku nasem middlewaru (error-handler.js unutar middleware foldera)
@@ -37,23 +37,23 @@ const login = async (req, res) => {
 
   // prvo proveravamo da li fali jedan od inputa
   if (!email || !password) {
-    throw new BadRequestError("Please provide all values");
+    throw new BadRequestError('Please provide all values');
   }
 
   // prvo nalazimo usera sa tim email koji je korisnik iskucao u login input, da vidimo da li postoji u bazi
   // User.findOne() metoda nece da vrati password jer smo rekli u user skimi da select ima vrednost false za password i zato moramo da dodamo select metodu ovde ('+password')
   // pravice problem tamo u user.comparePassword kada pristupamo this.password (undefined) ukoliko ne prosledimo select() metodu!
-  const user = await User.findOne({ email }).select("+password");
+  const user = await User.findOne({ email }).select('+password');
   // ukoliko user sa tim email ne postoji vracamo gresku
   if (!user) {
-    throw new UnAuthenticatedError("Invalid Credentials");
+    throw new UnAuthenticatedError('Invalid Credentials');
   }
 
   // ako user sa tim email postoji onda hocemo da uporedimo password
   const isPasswordCorrect = await user.comparePassword(password);
   // saljemo gresku ako se uneti password ne pokalapa sa passwordom od usera ciji je email unet
   if (!isPasswordCorrect) {
-    throw new UnAuthenticatedError("Invalid Credentials");
+    throw new UnAuthenticatedError('Invalid Credentials');
   }
 
   const token = await user.createJWT();
@@ -67,7 +67,7 @@ const updateUser = async (req, res) => {
   const { email, name, lastName, location } = req.body;
 
   if (!email || !name || !lastName || !location) {
-    throw new BadRequestError("Please provide all values");
+    throw new BadRequestError('Please provide all values');
   }
 
   const user = await User.findOne({ _id: req.user.userId });
