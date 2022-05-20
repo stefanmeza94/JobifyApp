@@ -88,9 +88,9 @@ const showStats = async (req, res) => {
     declined: stats.declined || 0,
   };
 
-  let montlyApplications = [];
+  let monthlyApplications = [];
 
-  res.status(StatusCodes.OK).json({ defaultStats, montlyApplications });
+  res.status(StatusCodes.OK).json({ defaultStats, monthlyApplications });
 };
 
 export { createJob, deleteJob, getAllJobs, updateJob, showStats };
