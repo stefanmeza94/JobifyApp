@@ -10,11 +10,23 @@ const PageBtnContainer = () => {
   });
 
   const prevPage = () => {
-    console.log('prev page');
+    let newPage = page - 1;
+    if (newPage < 1) {
+      // newPage = numOfPages;
+      // or aleternative
+      newPage = 1;
+    }
+    changePage(newPage);
   };
 
   const nextPage = () => {
-    console.log('next page');
+    let newPage = page + 1;
+    if (newPage > numOfPages) {
+      // newPage = 1;
+      // or alternative
+      newPage = numOfPages;
+    }
+    changePage(newPage);
   };
 
   return (

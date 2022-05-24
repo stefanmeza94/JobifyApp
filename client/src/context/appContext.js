@@ -123,7 +123,6 @@ const AppProvider = ({ children }) => {
     localStorage.removeItem('location');
   };
 
-  // prakticno su register i login bile dve odvojene funkcije ali posto su jako slicne odradjena je jedna kojoj prosledjujemo kroz parametre da li je u pitanju login ili register i naravno razlicite endpointe.
   const setupUser = async ({ currentUser, endPoint, alertText }) => {
     dispatch({ type: SETUP_USER_BEGIN });
     try {
@@ -165,7 +164,6 @@ const AppProvider = ({ children }) => {
       });
       addUserToLocalStorage({ user, token, location });
     } catch (error) {
-      // ako greska nije 401 samo tad prikazi gresku, jer ako je unauthorized samo cemo da izlogujemo usera, nema potrebe da prikazujemo nista
       if (error.response.status !== 401) {
         dispatch({
           type: UPDATE_USER_ERROR,
@@ -214,8 +212,7 @@ const AppProvider = ({ children }) => {
       } = await authFetch(url);
       dispatch({ type: GET_JOBS_SUCCESS, payload: { jobs, totalJobs, numOfPages } });
     } catch (error) {
-      console.log(error);
-      // logoutUser();
+      logoutUser();
     }
     clearAlert();
   };
@@ -248,11 +245,9 @@ const AppProvider = ({ children }) => {
     dispatch({ type: DELETE_JOB_BEGIN });
     try {
       await authFetch.delete(`/jobs/${jobId}`);
-      // cim obrisemo neki job hocemo da povucemo sve poslove opet da bi dobili updattovani array bez tog posla koji smo obrisali
       await getJobs();
     } catch (error) {
-      console.log(error.response);
-      // logoutUser();
+      logoutUser();
     }
   };
 
@@ -267,8 +262,7 @@ const AppProvider = ({ children }) => {
         payload: { stats: defaultStats, monthlyApplications },
       });
     } catch (error) {
-      console.log(error.response);
-      // logoutUser();
+      logoutUser();
     }
     clearAlert();
   };

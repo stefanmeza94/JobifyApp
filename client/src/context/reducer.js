@@ -1,4 +1,3 @@
-import { FaAcquisitionsIncorporated } from 'react-icons/fa';
 import {
   CLEAR_ALERT,
   DISPLAY_ALERT,
@@ -111,6 +110,7 @@ const reducer = (state, action) => {
     case HANDLE_CHANGE:
       return {
         ...state,
+        page: 1,
         [action.payload.name]: action.payload.value,
       };
     case CLEAR_VALUES:

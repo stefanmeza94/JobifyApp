@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 
-const connectDB = url => {
-  // vraca promise tako da moramo da ga awaitujemo u server.js
+const connectDB = (url) => {
   return mongoose.connect(url);
 };
 
